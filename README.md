@@ -10,3 +10,5 @@ in local.properties add:
 MAPS_API_KEY = MAPS_KEY_HERE
 
 OPEN_ROUTE_KEY = API_KEY_HERE
+
+(MVVM, Room, Dagger-hilt, Retrofit)
