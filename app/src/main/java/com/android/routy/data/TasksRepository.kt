@@ -5,6 +5,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 
@@ -59,23 +61,28 @@ class TasksRepository @Inject constructor(
 
         val requestBody = jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
 
-        val response = api.postRouteOptimization(requestBody)
+        try {
+            val response = api.postRouteOptimization(requestBody)
+            if(response.isSuccessful){
+                val responseJson = JSONObject(response.body()?.string()!!)
 
-        if(response.isSuccessful){
-            val responseJson = JSONObject(response.body()?.string()!!)
+                val routeArray = responseJson.getJSONArray("routes")
+                val routeObject = routeArray.getJSONObject(0)
+                val stepsArray = routeObject.getJSONArray("steps")
 
-            val routeArray = responseJson.getJSONArray("routes")
-            val routeObject = routeArray.getJSONObject(0)
-            val stepsArray = routeObject.getJSONArray("steps")
-
-            for(i in 0 until stepsArray.length()){
-                val stepsObject = stepsArray.getJSONObject(i)
-                val type = stepsObject.getString("type")
-                if(type.equals("job")){
-                    val id = stepsObject.getInt("id")
-                    taskDao.updateIndex(i, id)
+                for(i in 0 until stepsArray.length()){
+                    val stepsObject = stepsArray.getJSONObject(i)
+                    val type = stepsObject.getString("type")
+                    if(type.equals("job")){
+                        val id = stepsObject.getInt("id")
+                        taskDao.updateIndex(i, id)
+                    }
                 }
             }
+        } catch (exception: IOException){
+
+        } catch (exception: HttpException){
+
         }
     }
 }
