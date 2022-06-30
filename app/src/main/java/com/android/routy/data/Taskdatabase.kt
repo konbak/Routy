@@ -23,8 +23,8 @@ abstract class TaskDatabase : RoomDatabase(){
 
             val dao = database.get().taskDao()
             applicationScope.launch {
-                dao.insert(Task("Home", "Sokratous 12",38.892560390990646, 22.427718300438134, optimize_index = 2 ))
-                dao.insert(Task("Home", "Sokratous 12",38.892560390990646, 22.427718300438134, optimize_index = 1 ))
+                dao.insert(Task("Home", "Test Address1",35.321424, 20.123123, optimize_index = 2 ))
+                dao.insert(Task("Home", "Test Address2",30.892560, 21.427718300, optimize_index = 1 ))
             }
         }
     }
