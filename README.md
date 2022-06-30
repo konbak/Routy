@@ -7,4 +7,5 @@ and a [openRouteServiceKey](https://openrouteservice.org/dev/#/api-docs/optimiza
 
 in local.properties add:
 MAPS_API_KEY = MAPS_KEY_HERE
+
 OPEN_ROUTE_KEY = API_KEY_HERE
