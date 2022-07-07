@@ -7,6 +7,9 @@ import com.android.routy.data.TasksRepository
 import com.google.android.libraries.places.api.model.Place
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +29,18 @@ class TasksViewModel @Inject constructor(
         taskDao.insert(newTask)
     }
 
+
+    private val responseMessage = MutableLiveData<String>()
+    val msg: LiveData<String> = responseMessage
+
     fun optimizeRoute(latitude: Double, longitude: Double) = viewModelScope.launch {
-        repository.optimizeRoute(latitude, longitude)
+        try {
+            repository.optimizeRoute(latitude, longitude)
+            responseMessage.value = "Route optimized"
+        } catch (exception: IOException){
+            responseMessage.value = "Route did not optimized: "+exception
+        } catch (exception: HttpException){
+            responseMessage.value = "Route did not optimized: "+exception
+        }
     }
 }

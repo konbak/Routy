@@ -27,6 +27,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -107,6 +108,10 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
                 if(currentLocation != null) {
                     viewModel.optimizeRoute(currentLocation!!.latitude, currentLocation!!.longitude)
                 }
+            }
+
+            viewModel.msg.observe(viewLifecycleOwner){
+                Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
             }
         }
 
