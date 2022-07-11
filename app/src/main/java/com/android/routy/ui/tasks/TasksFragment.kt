@@ -47,6 +47,13 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
 
         googleMap.setMyLocationEnabled(true)
 
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                if (location != null) {
+                    currentLocation = location
+                }
+            }
+
 
         viewModel.tasks.observe(viewLifecycleOwner){ tasksList ->
             googleMap.clear()
@@ -56,7 +63,11 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
             var maxLon = Int.MIN_VALUE.toDouble()
             for (item in tasksList){
                 val marker = LatLng(item.latitude, item.longitude)
-                googleMap.addMarker(MarkerOptions().position(marker).title(item.name))
+                var index = ""
+                if(item.optimize_index < 1000)
+                    index = item.optimize_index.toString()
+
+                googleMap.addMarker(MarkerOptions().position(marker).title(index+" "+item.name))
 
                 maxLat = Math.max(item.latitude, maxLat)
                 minLat = Math.min(item.latitude, minLat)
