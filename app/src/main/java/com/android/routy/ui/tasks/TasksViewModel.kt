@@ -21,7 +21,7 @@ class TasksViewModel @Inject constructor(
     val tasks = repository.getTasks().asLiveData()
 
     fun onTaskCheckedChanged(task: Task, isChecked: Boolean) = viewModelScope.launch {
-        taskDao.update(task.copy(completed = isChecked))
+        taskDao.update(task.copy(completed = isChecked, optimize_index = 1000))
     }
 
     fun saveTask(place : Place) = viewModelScope.launch {

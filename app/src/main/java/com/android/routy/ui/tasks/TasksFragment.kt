@@ -40,6 +40,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
     private val AUTOCOMPLETE_REQUEST_CODE = 1
 
     private var currentLocation: Location? = null
+    var isFABOpen: Boolean = false
 
     private val callback = OnMapReadyCallback { googleMap ->
 
@@ -98,7 +99,19 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
                 setHasFixedSize(true)
             }
 
-            fabAddTask.setOnClickListener{
+            fabAddTasks.setOnClickListener{
+                if(!isFABOpen){
+                    isFABOpen = true
+                    fabAddNew.animate().translationY(-200F)
+                    fabSelectExisted.animate().translationY(-400F)
+                }else{
+                    isFABOpen = false
+                    fabAddNew.animate().translationY(0F)
+                    fabSelectExisted.animate().translationY(0F)
+                }
+            }
+
+            fabAddNew.setOnClickListener{
                 val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
                     .build(requireContext())
                 startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
@@ -144,7 +157,6 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
-
 
     override fun onCheckBoxClick(task: Task, isChecked: Boolean) {
         viewModel.onTaskCheckedChanged(task, isChecked)

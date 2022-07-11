@@ -7,4 +7,8 @@
 
     <dimen name="fragment_permission_title_text_size">24sp</dimen>
     <dimen name="fragment_permission_body_text_size">18sp</dimen>
+
+    <dimen name="standard_55">55dp</dimen>
+    <dimen name="standard_105">105dp</dimen>
+    <dimen name="standard_155">155dp</dimen>
 </resources>
