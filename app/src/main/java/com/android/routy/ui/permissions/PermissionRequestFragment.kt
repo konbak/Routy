@@ -1,16 +1,15 @@
 package com.android.routy.ui.permissions
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.android.routy.R
 import com.android.routy.databinding.FragmentPermissionRequestBinding
 import com.android.routy.util.hasPermission
-
-private const val REQUEST_FINE_LOCATION_PERMISSIONS_REQUEST_CODE = 34
+import com.google.android.material.snackbar.Snackbar
 
 
 class PermissionRequestFragment : Fragment(R.layout.fragment_permission_request) {
@@ -31,7 +30,9 @@ class PermissionRequestFragment : Fragment(R.layout.fragment_permission_request)
                 requestLocationPermission()
             }
         }
+
     }
+
 
     private fun requestLocationPermission() {
         val permissionApproved =
@@ -42,31 +43,19 @@ class PermissionRequestFragment : Fragment(R.layout.fragment_permission_request)
             val action = PermissionRequestFragmentDirections.actionPermissionRequestFragmentToTasksFragment()
             findNavController().navigate(action)
         } else {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_FINE_LOCATION_PERMISSIONS_REQUEST_CODE
-            )
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            REQUEST_FINE_LOCATION_PERMISSIONS_REQUEST_CODE -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                ) {
-                    //go to Tasks fragment
-                    val action =
-                        PermissionRequestFragmentDirections.actionPermissionRequestFragmentToTasksFragment()
-                    findNavController().navigate(action)
-                } else {
-                    requestLocationPermission()
-                    //Snackbar.make(requireView(), "Need location Permission", Snackbar.LENGTH_LONG).show()
-                }
-                return
-            }
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            val action =
+                PermissionRequestFragmentDirections.actionPermissionRequestFragmentToTasksFragment()
+            findNavController().navigate(action)
+        } else {
+            Snackbar.make(requireView(), "Need location Permission", Snackbar.LENGTH_LONG).show()
         }
     }
 
