@@ -21,6 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -46,23 +47,26 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
 
         googleMap.setMyLocationEnabled(true)
 
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location : Location? ->
-                if (location != null) {
-                    currentLocation = location
-                    val myLocation = CameraUpdateFactory.newLatLngZoom(
-                        LatLng(location.latitude, location.longitude), 15f
-                    )
-                    googleMap.animateCamera(myLocation)
-                }
-            }
 
         viewModel.tasks.observe(viewLifecycleOwner){ tasksList ->
             googleMap.clear()
+            var minLat = Int.MAX_VALUE.toDouble()
+            var maxLat = Int.MIN_VALUE.toDouble()
+            var minLon = Int.MAX_VALUE.toDouble()
+            var maxLon = Int.MIN_VALUE.toDouble()
             for (item in tasksList){
                 val marker = LatLng(item.latitude, item.longitude)
                 googleMap.addMarker(MarkerOptions().position(marker).title(item.name))
+
+                maxLat = Math.max(item.latitude, maxLat)
+                minLat = Math.min(item.latitude, minLat)
+                maxLon = Math.max(item.longitude, maxLon)
+                minLon = Math.min(item.longitude, minLon)
             }
+
+            val bounds = LatLngBounds.Builder().include(LatLng(maxLat, maxLon))
+                .include(LatLng(minLat, minLon)).build()
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50))
         }
     }
 
