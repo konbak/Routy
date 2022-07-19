@@ -15,10 +15,18 @@ import javax.inject.Inject
 @HiltViewModel
 class TasksViewModel @Inject constructor(
     private val taskDao: TaskDao,
-    private val repository: TasksRepository
+    private val repository: TasksRepository,
+    state: SavedStateHandle
 ) : ViewModel(){
 
     val tasks = repository.getTasks().asLiveData()
+
+    val fabState = state.getLiveData("isOpen", true)
+
+    fun changeFabState(isOpen: Boolean){
+        fabState.value = isOpen
+    }
+
 
     fun onTaskCheckedChanged(task: Task, isChecked: Boolean) = viewModelScope.launch {
         taskDao.update(task.copy(completed = isChecked, optimize_index = 1000))
@@ -38,9 +46,9 @@ class TasksViewModel @Inject constructor(
             repository.optimizeRoute(latitude, longitude)
             responseMessage.value = "Route optimized"
         } catch (exception: IOException){
-            responseMessage.value = "Route did not optimized: "+exception
+            responseMessage.value = "Route did not optimized: $exception"
         } catch (exception: HttpException){
-            responseMessage.value = "Route did not optimized: "+exception
+            responseMessage.value = "Route did not optimized: $exception"
         }
     }
 }

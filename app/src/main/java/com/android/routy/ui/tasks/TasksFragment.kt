@@ -28,6 +28,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,7 +42,9 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
     private val AUTOCOMPLETE_REQUEST_CODE = 1
 
     private var currentLocation: Location? = null
-    var isFABOpen: Boolean = false
+
+    lateinit var fabAddNew: FloatingActionButton
+    lateinit var fabSelectExisted: FloatingActionButton
 
     private val callback = OnMapReadyCallback { googleMap ->
 
@@ -105,6 +108,9 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
 
         val binding = FragmentTasksBinding.bind(view)
 
+        fabSelectExisted = binding.fabSelectExisted
+        fabAddNew = binding.fabAddNew
+
         val taskAdapter = TaskAdapter(this)
 
         binding.apply {
@@ -115,14 +121,10 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
             }
 
             fabAddTasks.setOnClickListener{
-                if(!isFABOpen){
-                    isFABOpen = true
-                    fabAddNew.animate().translationY(-200F)
-                    fabSelectExisted.animate().translationY(-400F)
+                if(viewModel.fabState.value == true){
+                    viewModel.changeFabState(false)
                 }else{
-                    isFABOpen = false
-                    fabAddNew.animate().translationY(0F)
-                    fabSelectExisted.animate().translationY(0F)
+                    viewModel.changeFabState(true)
                 }
             }
 
@@ -140,6 +142,17 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
 
             viewModel.msg.observe(viewLifecycleOwner){
                 Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
+            }
+        }
+
+
+        viewModel.fabState.observe(viewLifecycleOwner){
+            if(it){
+                fabAddNew.animate().translationY(0F)
+                fabSelectExisted.animate().translationY(0F)
+            }else{
+                fabAddNew.animate().translationY(-200F)
+                fabSelectExisted.animate().translationY(-400F)
             }
         }
 
