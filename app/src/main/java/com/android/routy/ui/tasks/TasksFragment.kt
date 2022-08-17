@@ -1,5 +1,6 @@
 package com.android.routy.ui.tasks
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.location.Location
@@ -46,6 +47,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TaskAdapter.OnItemClick
     lateinit var fabAddNew: FloatingActionButton
     lateinit var fabSelectExisted: FloatingActionButton
 
+    @SuppressLint("MissingPermission")
     private val callback = OnMapReadyCallback { googleMap ->
 
         googleMap.setMyLocationEnabled(true)
