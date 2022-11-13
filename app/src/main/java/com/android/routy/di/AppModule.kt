@@ -54,6 +54,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUnsplashApi(retrofit: Retrofit): OpenRouteServicesApi =
+    fun provideApi(retrofit: Retrofit): OpenRouteServicesApi =
         retrofit.create(OpenRouteServicesApi::class.java)
 }
