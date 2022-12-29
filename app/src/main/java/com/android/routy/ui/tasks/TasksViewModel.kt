@@ -43,8 +43,10 @@ class TasksViewModel @Inject constructor(
 
     fun optimizeRoute(latitude: Double, longitude: Double) = viewModelScope.launch {
         try {
-            repository.optimizeRoute(latitude, longitude)
-            responseMessage.value = "Route optimized"
+            if(repository.optimizeRoute(latitude, longitude))
+                responseMessage.value = "Route optimized"
+            else
+                responseMessage.value = "Route did not optimized"
         } catch (exception: IOException){
             responseMessage.value = "Route did not optimized: $exception"
         } catch (exception: HttpException){

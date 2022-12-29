@@ -5,8 +5,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 
@@ -19,7 +17,7 @@ class TasksRepository @Inject constructor(
 
     fun getTasks() = taskDao.getTasks()
 
-    suspend fun optimizeRoute(startLat: Double, startLon: Double) {
+    suspend fun optimizeRoute(startLat: Double, startLon: Double): Boolean {
 
         val tasksList: List<Task> = taskDao.getTasksForOptimize()
 
@@ -78,6 +76,9 @@ class TasksRepository @Inject constructor(
                     taskDao.updateIndex(i, id)
                 }
             }
+            return true
+        }else{
+            return false
         }
     }
 }
